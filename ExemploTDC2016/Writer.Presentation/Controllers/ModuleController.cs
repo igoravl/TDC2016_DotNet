@@ -11,24 +11,27 @@ using Waf.Writer.Presentation.ViewModels;
 namespace Waf.Writer.Presentation.Controllers
 {
     /// <summary>
-    /// Responsible for the application lifecycle.
+    ///     Responsible for the application lifecycle.
     /// </summary>
     [Export(typeof(IModuleController)), Export]
     internal class ModuleController : IModuleController
     {
+        private readonly ConsoleViewModel _consoleViewModel;
         private readonly IEnvironmentService _environmentService;
+        private readonly DelegateCommand _exitCommand;
         private readonly FileController _fileController;
+        private readonly MainViewModel _mainViewModel;
         private readonly PrintController _printController;
         private readonly ShellViewModel _shellViewModel;
-        private readonly MainViewModel _mainViewModel;
         private readonly StartViewModel _startViewModel;
-        private readonly DelegateCommand _exitCommand;
-        private readonly ConsoleViewModel _consoleViewModel;
 
         [ImportingConstructor]
-        public ModuleController(IEnvironmentService environmentService, IPresentationService presentationService, ShellService shellService,
-            Lazy<FileController> fileController, Lazy<RichTextDocumentController> richTextDocumentController, Lazy<PrintController> printController,
-            Lazy<ShellViewModel> shellViewModel, Lazy<MainViewModel> mainViewModel, Lazy<StartViewModel> startViewModel, Lazy<IPowerShellService> powerShellService,
+        public ModuleController(IEnvironmentService environmentService, IPresentationService presentationService,
+            ShellService shellService,
+            Lazy<FileController> fileController, Lazy<RichTextDocumentController> richTextDocumentController,
+            Lazy<PrintController> printController,
+            Lazy<ShellViewModel> shellViewModel, Lazy<MainViewModel> mainViewModel, Lazy<StartViewModel> startViewModel,
+            Lazy<IPowerShellService> powerShellService,
             Lazy<ConsoleViewModel> consoleViewModel)
         {
             // Upgrade the settings from a previous version when the new version starts the first time.
@@ -42,18 +45,18 @@ namespace Waf.Writer.Presentation.Controllers
             InitializeCultures();
             presentationService.InitializeCultures();
 
-            this._environmentService = environmentService;
-            this._fileController = fileController.Value;
+            _environmentService = environmentService;
+            _fileController = fileController.Value;
             //this._richTextDocumentController = richTextDocumentController.Value;
-            this._printController = printController.Value;
-            this._shellViewModel = shellViewModel.Value;
-            this._mainViewModel = mainViewModel.Value;
-            this._startViewModel = startViewModel.Value;
-            this._consoleViewModel = consoleViewModel.Value;
+            _printController = printController.Value;
+            _shellViewModel = shellViewModel.Value;
+            _mainViewModel = mainViewModel.Value;
+            _startViewModel = startViewModel.Value;
+            _consoleViewModel = consoleViewModel.Value;
 
-            shellService.ShellView = this._shellViewModel.View;
-            this._shellViewModel.Closing += ShellViewModelClosing;
-            this._exitCommand = new DelegateCommand(Close);
+            shellService.ShellView = _shellViewModel.View;
+            _shellViewModel.Closing += ShellViewModelClosing;
+            _exitCommand = new DelegateCommand(Close);
 
             powerShellService.Value.Initialize();
         }
@@ -62,7 +65,7 @@ namespace Waf.Writer.Presentation.Controllers
         {
             _shellViewModel.ExitCommand = _exitCommand;
             _mainViewModel.StartView = _startViewModel.View;
-            
+
             _printController.Initialize();
             _fileController.Initialize();
         }
@@ -71,12 +74,12 @@ namespace Waf.Writer.Presentation.Controllers
         {
             _shellViewModel.ContentView = _mainViewModel.View;
             _shellViewModel.ConsoleView = _consoleViewModel.View;
-            
+
             if (!string.IsNullOrEmpty(_environmentService.DocumentFileName))
             {
                 _fileController.Open(_environmentService.DocumentFileName);
             }
-            
+
             _shellViewModel.Show();
         }
 
@@ -85,9 +88,9 @@ namespace Waf.Writer.Presentation.Controllers
             _fileController.Shutdown();
             _printController.Shutdown();
 
-            if (_shellViewModel.NewLanguage != null) 
-            { 
-                Settings.Default.UICulture = _shellViewModel.NewLanguage.Name; 
+            if (_shellViewModel.NewLanguage != null)
+            {
+                Settings.Default.UICulture = _shellViewModel.NewLanguage.Name;
             }
             try
             {
@@ -101,11 +104,11 @@ namespace Waf.Writer.Presentation.Controllers
 
         private static void InitializeCultures()
         {
-            if (!String.IsNullOrEmpty(Settings.Default.Culture))
+            if (!string.IsNullOrEmpty(Settings.Default.Culture))
             {
                 Thread.CurrentThread.CurrentCulture = new CultureInfo(Settings.Default.Culture);
             }
-            if (!String.IsNullOrEmpty(Settings.Default.UICulture))
+            if (!string.IsNullOrEmpty(Settings.Default.UICulture))
             {
                 Thread.CurrentThread.CurrentUICulture = new CultureInfo(Settings.Default.UICulture);
             }

@@ -12,11 +12,11 @@ namespace Waf.Writer.Presentation.ViewModels
         private readonly IShellService shellService;
         private RichTextDocument document;
         private bool isBold;
-        private bool isItalic;
-        private bool isUnderline;
-        private bool isNumberedList;
         private bool isBulletList;
+        private bool isItalic;
+        private bool isNumberedList;
         private bool isSpellCheckEnabled;
+        private bool isUnderline;
 
 
         [ImportingConstructor]

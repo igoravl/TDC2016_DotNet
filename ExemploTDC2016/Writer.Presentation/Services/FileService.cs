@@ -12,28 +12,24 @@ namespace Waf.Writer.Presentation.Services
     internal class FileService : Model, IFileService
     {
         private readonly ObservableCollection<IDocument> documents;
-        private readonly ReadOnlyObservableCollection<IDocument> readOnlyDocuments;
         private IDocument activeDocument;
-        private RecentFileList recentFileList;
+        private ICommand closeCommand;
         private ICommand newCommand;
         private ICommand openCommand;
-        private ICommand closeCommand;
-        private ICommand saveCommand;
+        private RecentFileList recentFileList;
         private ICommand saveAsCommand;
+        private ICommand saveCommand;
 
 
         [ImportingConstructor]
         public FileService()
         {
-            this.documents = new ObservableCollection<IDocument>();
-            this.readOnlyDocuments = new ReadOnlyObservableCollection<IDocument>(documents);
+            documents = new ObservableCollection<IDocument>();
+            Documents = new ReadOnlyObservableCollection<IDocument>(documents);
         }
 
 
-        public ReadOnlyObservableCollection<IDocument> Documents
-        {
-            get { return readOnlyDocuments; }
-        }
+        public ReadOnlyObservableCollection<IDocument> Documents { get; }
 
         public IDocument ActiveDocument
         {

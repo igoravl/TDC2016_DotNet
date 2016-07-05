@@ -4,7 +4,6 @@ using System.Waf.Applications;
 using System.Windows;
 using System.Windows.Controls;
 using Waf.Writer.Presentation.ViewModels;
-using Waf.Writer.Presentation.Views;
 
 namespace Waf.Writer.Presentation.Views
 {
@@ -13,18 +12,21 @@ namespace Waf.Writer.Presentation.Views
     {
         private readonly Lazy<PrintPreviewViewModel> viewModel;
 
-        
+
         public PrintPreviewView()
         {
             InitializeComponent();
 
-            viewModel = new Lazy<PrintPreviewViewModel>(() => ViewHelper.GetViewModel<PrintPreviewViewModel>(this));
+            viewModel = new Lazy<PrintPreviewViewModel>(() => this.GetViewModel<PrintPreviewViewModel>());
             Loaded += FirstTimeLoadedHandler;
             IsVisibleChanged += IsVisibleChangedHandler;
         }
 
 
-        private PrintPreviewViewModel ViewModel { get { return viewModel.Value; } }
+        private PrintPreviewViewModel ViewModel
+        {
+            get { return viewModel.Value; }
+        }
 
 
         public void FitToWidth()

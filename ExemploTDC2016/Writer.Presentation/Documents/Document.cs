@@ -5,21 +5,23 @@ namespace Waf.Writer.Presentation.Documents
 {
     public abstract class Document : Model, IDocument
     {
-        private readonly IDocumentType documentType;
         private string fileName;
         private bool modified;
 
 
         protected Document(IDocumentType documentType)
         {
-            if (documentType == null) { throw new ArgumentNullException("documentType"); }
-            this.documentType = documentType;
+            if (documentType == null)
+            {
+                throw new ArgumentNullException("documentType");
+            }
+            DocumentType = documentType;
         }
 
 
-        public IDocumentType DocumentType { get { return documentType; } }
+        public IDocumentType DocumentType { get; }
 
-        public string FileName 
+        public string FileName
         {
             get { return fileName; }
             set { SetProperty(ref fileName, value); }

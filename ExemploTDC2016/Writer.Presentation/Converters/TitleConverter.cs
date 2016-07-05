@@ -10,13 +10,14 @@ namespace Waf.Writer.Presentation.Converters
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (values == null || values.Length != 2 || !(values[0] is string) || !(values[1] == null || values[1] is string))
+            if (values == null || values.Length != 2 || !(values[0] is string) ||
+                !(values[1] == null || values[1] is string))
             {
                 return DependencyProperty.UnsetValue;
             }
 
-            string title = (string)values[0];
-            string documentName = (string)values[1];
+            var title = (string) values[0];
+            var documentName = (string) values[1];
 
             if (!string.IsNullOrEmpty(documentName))
             {

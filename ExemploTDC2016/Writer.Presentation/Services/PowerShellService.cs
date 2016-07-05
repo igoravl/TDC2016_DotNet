@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Primitives;
-using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Waf.Writer.Presentation.ViewModels;
 
 namespace Waf.Writer.Presentation.Services
@@ -26,19 +22,19 @@ Function Init($viewModel)
 
     $global:App = $viewModel
 } ";
-        private PowerShell _powerShellHost;
         private readonly ShellViewModel _shellViewModel;
         private bool _isInitialized;
-
-        public event EventHandler<TextOutputtedEventArgs> WarningOutputted;
-        public event EventHandler<TextOutputtedEventArgs> ErrorOutputted;
-        public event EventHandler<TextOutputtedEventArgs> VerboseOutputted;
+        private PowerShell _powerShellHost;
 
         [ImportingConstructor]
         public PowerShellService(ShellViewModel shellViewModel)
         {
             _shellViewModel = shellViewModel;
         }
+
+        public event EventHandler<TextOutputtedEventArgs> WarningOutputted;
+        public event EventHandler<TextOutputtedEventArgs> ErrorOutputted;
+        public event EventHandler<TextOutputtedEventArgs> VerboseOutputted;
 
         public void Initialize()
         {
@@ -58,6 +54,19 @@ Function Init($viewModel)
             {
                 Initialize();
             }
+        }
+
+        public void RunAutoExec()
+        {
+        }
+
+        public IEnumerable<object> Invoke(string script)
+        {
+            _powerShellHost.AddScript(script).AddCommand("Out-String");
+            var result = _powerShellHost.Invoke();
+            _powerShellHost.Commands.Clear();
+
+            return result;
         }
 
         private void LoadPowerShell()
@@ -81,14 +90,9 @@ Function Init($viewModel)
             _powerShellHost.Invoke();
         }
 
-        public void RunAutoExec()
-        {
-
-        }
-
         private void Error_DataAdded(object sender, DataAddedEventArgs e)
         {
-            var data = ((PSDataCollection<ErrorRecord>)sender)[e.Index];
+            var data = ((PSDataCollection<ErrorRecord>) sender)[e.Index];
             ErrorOutputted?.Invoke(this, new TextOutputtedEventArgs(data.ToString()));
         }
 
@@ -100,17 +104,8 @@ Function Init($viewModel)
 
         private void Verbose_DataAdded(object sender, DataAddedEventArgs e)
         {
-            var data = ((PSDataCollection<VerboseRecord>)sender)[e.Index];
+            var data = ((PSDataCollection<VerboseRecord>) sender)[e.Index];
             VerboseOutputted?.Invoke(this, new TextOutputtedEventArgs(data.ToString()));
-        }
-
-        public IEnumerable<object> Invoke(string script)
-        {
-            _powerShellHost.AddScript(script).AddCommand("Out-String");
-            var result = _powerShellHost.Invoke();
-            _powerShellHost.Commands.Clear();
-
-            return result;
         }
     }
 }

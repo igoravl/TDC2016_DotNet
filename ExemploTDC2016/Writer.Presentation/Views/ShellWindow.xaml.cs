@@ -5,7 +5,6 @@ using System.Windows.Controls;
 using System.Windows.Controls.Ribbon;
 using System.Windows.Data;
 using System.Windows.Input;
-using Waf.Writer.Presentation.Views;
 
 namespace Waf.Writer.Presentation.Views
 {
@@ -39,7 +38,7 @@ namespace Waf.Writer.Presentation.Views
         {
             BindingOperations.GetBindingExpression(zoomBox, ComboBox.TextProperty).UpdateSource();
         }
-        
+
         private void ZoomBoxKeyDownHandler(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Return)

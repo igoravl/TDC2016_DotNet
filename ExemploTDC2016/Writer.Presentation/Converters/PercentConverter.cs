@@ -16,10 +16,10 @@ namespace Waf.Writer.Presentation.Converters
         {
             culture = culture ?? CultureInfo.CurrentCulture;
             double d;
-            if (double.TryParse(((string)value).Replace(culture.NumberFormat.PercentSymbol, ""),
+            if (double.TryParse(((string) value).Replace(culture.NumberFormat.PercentSymbol, ""),
                 NumberStyles.Float | NumberStyles.AllowThousands, culture, out d))
             {
-                return d / 100d;
+                return d/100d;
             }
 
             return DependencyProperty.UnsetValue;

@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Collections.ObjectModel;
-using Waf.Writer.Presentation.Documents;
-using System.Windows.Input;
 using System.Waf.Applications;
+using System.Windows.Input;
+using Waf.Writer.Presentation.Documents;
 
 namespace Waf.Writer.Presentation.Services
 {

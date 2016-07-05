@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Globalization;
 using System.Waf.Applications;
 using System.Waf.Foundation;
 using System.Windows.Input;
@@ -10,10 +9,10 @@ namespace Waf.Writer.Presentation.Services
     [Export(typeof(IShellService)), Export]
     internal class ShellService : Model, IShellService
     {
-        private object shellView;
-        private string documentName;
         private IEditingCommands activeEditingCommands;
         private IZoomCommands activeZoomCommands;
+        private string documentName;
+        private object shellView;
 
 
         [ImportingConstructor]
@@ -52,16 +51,19 @@ namespace Waf.Writer.Presentation.Services
         private class DisabledEditingCommands : Model, IEditingCommands
         {
             public bool IsBold { get; set; }
-            
+
             public bool IsItalic { get; set; }
-            
+
             public bool IsUnderline { get; set; }
-            
+
             public bool IsNumberedList { get; set; }
-            
+
             public bool IsBulletList { get; set; }
 
-            public bool IsSpellCheckAvailable { get { return false; } }
+            public bool IsSpellCheckAvailable
+            {
+                get { return false; }
+            }
 
             public bool IsSpellCheckEnabled { get; set; }
         }
@@ -71,19 +73,31 @@ namespace Waf.Writer.Presentation.Services
             private readonly DelegateCommand disabledCommand = new DelegateCommand(() => { }, () => false);
 
 
-            public IReadOnlyList<string> DefaultZooms { get { return null; } }
+            public IReadOnlyList<string> DefaultZooms
+            {
+                get { return null; }
+            }
 
             public double Zoom
             {
                 get { return 1; }
                 set { }
             }
-            
-            public ICommand ZoomInCommand { get { return disabledCommand; } }
-            
-            public ICommand ZoomOutCommand { get { return disabledCommand; } }
-            
-            public ICommand FitToWidthCommand { get { return disabledCommand; } }
+
+            public ICommand ZoomInCommand
+            {
+                get { return disabledCommand; }
+            }
+
+            public ICommand ZoomOutCommand
+            {
+                get { return disabledCommand; }
+            }
+
+            public ICommand FitToWidthCommand
+            {
+                get { return disabledCommand; }
+            }
         }
     }
 }
