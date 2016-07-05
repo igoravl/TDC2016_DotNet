@@ -24,6 +24,7 @@ namespace Waf.Writer.Presentation.Controllers
         private readonly StartViewModel _startViewModel;
         private readonly DelegateCommand _exitCommand;
         private readonly ConsoleViewModel _consoleViewModel;
+        private readonly RichTextDocumentController _richTextDocumentController;
 
         [ImportingConstructor]
         public ModuleController(IEnvironmentService environmentService, IPresentationService presentationService, ShellService shellService,
@@ -44,7 +45,7 @@ namespace Waf.Writer.Presentation.Controllers
 
             this._environmentService = environmentService;
             this._fileController = fileController.Value;
-            //this._richTextDocumentController = richTextDocumentController.Value;
+            this._richTextDocumentController = richTextDocumentController.Value;
             this._printController = printController.Value;
             this._shellViewModel = shellViewModel.Value;
             this._mainViewModel = mainViewModel.Value;

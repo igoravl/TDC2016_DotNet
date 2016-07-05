@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Primitives;
+using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -69,6 +71,8 @@ Function Init($viewModel)
             var rs = RunspaceFactory.CreateRunspace(iss);
             rs.Open();
 
+            Runspace.DefaultRunspace = rs;
+
             _powerShellHost = PowerShell.Create();
             _powerShellHost.Runspace = rs;
             _powerShellHost.AddScript(InitScript);
@@ -79,11 +83,42 @@ Function Init($viewModel)
 
             _powerShellHost.AddCommand("Init").AddParameter("viewModel", _shellViewModel);
             _powerShellHost.Invoke();
+
+            try
+            {
+                var exeDir = AppDomain.CurrentDomain.BaseDirectory;
+                var scriptsDir = Path.Combine(exeDir, "scripts");
+
+                foreach (var scriptFile in Directory.GetFiles(scriptsDir, "*.ps1"))
+                {
+                    var contents = File.ReadAllText(scriptFile);
+                    _powerShellHost.AddScript(contents);
+                }
+
+                _powerShellHost.Invoke();
+            }
+            finally
+            {
+                _powerShellHost.Commands.Clear();
+            }
         }
 
         public void RunAutoExec()
         {
+            try
+            {
+                _powerShellHost.AddScript("Get-Command AutoExec");
+                var cmd = _powerShellHost.Invoke();
 
+                if (cmd.Count <= 0) return;
+
+                _powerShellHost.AddCommand("AutoExec");
+                _powerShellHost.Invoke();
+            }
+            finally 
+            {
+                _powerShellHost.Commands.Clear();
+            }
         }
 
         private void Error_DataAdded(object sender, DataAddedEventArgs e)
