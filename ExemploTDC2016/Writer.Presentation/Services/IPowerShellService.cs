@@ -8,6 +8,7 @@ namespace Waf.Writer.Presentation.Services
         event EventHandler<TextOutputtedEventArgs> WarningOutputted;
         event EventHandler<TextOutputtedEventArgs> ErrorOutputted;
         event EventHandler<TextOutputtedEventArgs> VerboseOutputted;
+        IEnumerable<string> ScriptFiles { get; }
         void Initialize();
         void Reload();
         void RunAutoExec();

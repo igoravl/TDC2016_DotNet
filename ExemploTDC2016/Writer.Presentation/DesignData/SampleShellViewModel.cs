@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using Waf.Writer.Presentation.Services;
 using Waf.Writer.Presentation.ViewModels;
 using Waf.Writer.Presentation.Views;
 

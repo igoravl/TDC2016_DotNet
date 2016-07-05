@@ -86,10 +86,7 @@ Function Init($viewModel)
 
             try
             {
-                var exeDir = AppDomain.CurrentDomain.BaseDirectory;
-                var scriptsDir = Path.Combine(exeDir, "scripts");
-
-                foreach (var scriptFile in Directory.GetFiles(scriptsDir, "*.ps1"))
+                foreach (var scriptFile in ScriptFiles)
                 {
                     var contents = File.ReadAllText(scriptFile);
                     _powerShellHost.AddScript(contents);
@@ -100,6 +97,17 @@ Function Init($viewModel)
             finally
             {
                 _powerShellHost.Commands.Clear();
+            }
+        }
+
+        public IEnumerable<string> ScriptFiles
+        {
+            get
+            {
+                var exeDir = AppDomain.CurrentDomain.BaseDirectory;
+                var scriptsDir = Path.Combine(exeDir, "scripts");
+
+                return Directory.GetFiles(scriptsDir, "*.ps1");
             }
         }
 

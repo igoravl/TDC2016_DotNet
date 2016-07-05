@@ -60,5 +60,6 @@
     <Image x:Key="ClosePreviewImage" x:Shared="False" Source="Images/ClosePreview.png" Height="16" Width="16" />
 
     <ImageSource x:Key="PowerShellImageSource">Images/PowerShell.png</ImageSource>
+    <ImageSource x:Key="ScriptFilesImageSource">Images/ScriptFiles.png</ImageSource>
 
 </ResourceDictionary>

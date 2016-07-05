@@ -2,7 +2,10 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Globalization;
+using System.IO;
+using System.Linq;
 using System.Waf.Applications;
 using System.Waf.Applications.Services;
 using System.Windows.Controls.Ribbon;
@@ -20,6 +23,7 @@ namespace Waf.Writer.Presentation.ViewModels
         private readonly DelegateCommand englishCommand;
         private readonly DelegateCommand germanCommand;
         private readonly IMessageService messageService;
+        private readonly IPowerShellService _powerShellService;
         private readonly ICommand showConsoleCommand;
         private ICommand closePrintPreviewCommand;
         private double consoleHeight;
@@ -29,6 +33,7 @@ namespace Waf.Writer.Presentation.ViewModels
         private bool isConsoleVisible;
         private bool isPrintPreviewVisible;
         private ICommand printCommand;
+        private ICommand editMacrosCommand;
         private ICommand printPreviewCommand;
         private ObservableCollection<RibbonGroup> ribbonGroups = new ObservableCollection<RibbonGroup>();
 
@@ -43,6 +48,7 @@ namespace Waf.Writer.Presentation.ViewModels
             englishCommand = new DelegateCommand(() => SelectLanguage(new CultureInfo("en-US")));
             germanCommand = new DelegateCommand(() => SelectLanguage(new CultureInfo("de-DE")));
             aboutCommand = new DelegateCommand(ShowAboutMessage);
+            editMacrosCommand = new DelegateCommand(EditMacros);
 
             showConsoleCommand = new DelegateCommand(ShowConsole);
 
@@ -66,6 +72,18 @@ namespace Waf.Writer.Presentation.ViewModels
 
             ConsoleHeight = Settings.Default.ConsoleHeight;
         }
+
+        private void EditMacros()
+        {
+            const string isePath = @"C:\Windows\System32\WindowsPowerShell\v1.0\powershell_ise.exe";
+
+            var exeDir = AppDomain.CurrentDomain.BaseDirectory;
+            var scriptsDir = Path.Combine(exeDir, "scripts");
+            var scripts = string.Join(",", Directory.GetFiles(scriptsDir, "*.ps1"));
+
+            Process.Start(isePath, $"-file {scripts}");
+        }
+
 
         public string Title
         {
@@ -151,6 +169,12 @@ namespace Waf.Writer.Presentation.ViewModels
         {
             get { return consoleHeight; }
             set { SetProperty(ref consoleHeight, value); }
+        }
+
+        public ICommand EditMacrosCommand
+        {
+            get { return editMacrosCommand; }
+            set { editMacrosCommand = value; }
         }
 
         public event CancelEventHandler Closing;

@@ -289,6 +289,8 @@
                 <RibbonGroup Header="Macros">
                     <RibbonToggleButton Label="Console" LargeImageSource="{StaticResource PowerShellImageSource}"
                                         IsChecked="{Binding IsConsoleVisible}" KeyTip="C" />
+                    <RibbonButton Label="Script Editor" LargeImageSource="{StaticResource ScriptFilesImageSource}"
+                                        Command="{Binding EditMacrosCommand}" KeyTip="M" />
                 </RibbonGroup>
             </RibbonTab>
 
