@@ -9,7 +9,7 @@ namespace Waf.Writer.Presentation.Services
         IReadOnlyList<string> DefaultZooms { get; }
 
         double Zoom { get; set; }
-        
+
         ICommand ZoomInCommand { get; }
 
         ICommand ZoomOutCommand { get; }

@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using System.Waf.Applications;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using Waf.Writer.Presentation.ViewModels;
-using Waf.Writer.Presentation.Views;
-using System.ComponentModel;
-using System.Collections.Generic;
 
 namespace Waf.Writer.Presentation.Views
 {
@@ -16,15 +14,15 @@ namespace Waf.Writer.Presentation.Views
     public partial class RichTextView : UserControl, IRichTextView
     {
         private readonly Lazy<RichTextViewModel> viewModel;
-        private bool suppressTextChanged;
         private IReadOnlyList<Control> dynamicContextMenuItems;
+        private bool suppressTextChanged;
 
 
         public RichTextView()
         {
             InitializeComponent();
 
-            viewModel = new Lazy<RichTextViewModel>(() => ViewHelper.GetViewModel<RichTextViewModel>(this));
+            viewModel = new Lazy<RichTextViewModel>(() => this.GetViewModel<RichTextViewModel>());
             Loaded += FirstTimeLoadedHandler;
             IsVisibleChanged += IsVisibleChangedHandler;
         }
@@ -78,9 +76,9 @@ namespace Waf.Writer.Presentation.Views
         {
             TextRange selection = richTextBox.Selection;
 
-            object fontWeight = selection.GetPropertyValue(TextElement.FontWeightProperty);
-            object fontStyle = selection.GetPropertyValue(TextElement.FontStyleProperty);
-            object textDecotations = selection.GetPropertyValue(Inline.TextDecorationsProperty);
+            var fontWeight = selection.GetPropertyValue(TextElement.FontWeightProperty);
+            var fontStyle = selection.GetPropertyValue(TextElement.FontStyleProperty);
+            var textDecotations = selection.GetPropertyValue(Inline.TextDecorationsProperty);
 
             ViewModel.IsBold = fontWeight != DependencyProperty.UnsetValue &&
                                (FontWeight) fontWeight != FontWeights.Normal;
@@ -89,8 +87,8 @@ namespace Waf.Writer.Presentation.Views
             ViewModel.IsUnderline = textDecotations != DependencyProperty.UnsetValue &&
                                     textDecotations == TextDecorations.Underline;
 
-            bool isNumberedList = false;
-            bool isBulletList = false;
+            var isNumberedList = false;
+            var isBulletList = false;
             ListItem listItem = null;
             if (selection.Start.Paragraph != null)
             {
@@ -98,7 +96,7 @@ namespace Waf.Writer.Presentation.Views
             }
             if (listItem != null)
             {
-                List list = (List) listItem.Parent;
+                var list = (List) listItem.Parent;
                 isNumberedList = list.MarkerStyle == TextMarkerStyle.Decimal;
                 isBulletList = list.MarkerStyle == TextMarkerStyle.Disc;
             }
@@ -108,14 +106,14 @@ namespace Waf.Writer.Presentation.Views
 
         private void RichTextBoxContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
-            List<Control> menuItems = new List<Control>();
+            var menuItems = new List<Control>();
 
-            SpellingError spellingError = richTextBox.GetSpellingError(richTextBox.CaretPosition);
+            var spellingError = richTextBox.GetSpellingError(richTextBox.CaretPosition);
             if (spellingError != null)
             {
-                foreach (string suggestion in spellingError.Suggestions.Take(5))
+                foreach (var suggestion in spellingError.Suggestions.Take(5))
                 {
-                    MenuItem menuItem = new MenuItem()
+                    var menuItem = new MenuItem
                     {
                         Header = suggestion,
                         FontWeight = FontWeights.Bold,
@@ -127,18 +125,18 @@ namespace Waf.Writer.Presentation.Views
 
                 if (!menuItems.Any())
                 {
-                    MenuItem noSpellingSuggestions = new MenuItem()
+                    var noSpellingSuggestions = new MenuItem
                     {
                         Header = Properties.Resources.NoSpellingSuggestions,
                         FontWeight = FontWeights.Bold,
-                        IsEnabled = false,
+                        IsEnabled = false
                     };
                     menuItems.Add(noSpellingSuggestions);
                 }
 
                 menuItems.Add(new Separator());
 
-                MenuItem ignoreAllMenuItem = new MenuItem()
+                var ignoreAllMenuItem = new MenuItem
                 {
                     Header = Properties.Resources.IgnoreAllMenu,
                     Command = EditingCommands.IgnoreSpellingError
@@ -148,7 +146,7 @@ namespace Waf.Writer.Presentation.Views
                 menuItems.Add(new Separator());
             }
 
-            foreach (Control item in menuItems.Reverse<Control>())
+            foreach (var item in menuItems.Reverse<Control>())
             {
                 contextMenu.Items.Insert(0, item);
             }
@@ -158,7 +156,7 @@ namespace Waf.Writer.Presentation.Views
 
         private void RichTextBoxContextMenuClosing(object sender, ContextMenuEventArgs e)
         {
-            foreach (Control menuItem in dynamicContextMenuItems)
+            foreach (var menuItem in dynamicContextMenuItems)
             {
                 contextMenu.Items.Remove(menuItem);
             }

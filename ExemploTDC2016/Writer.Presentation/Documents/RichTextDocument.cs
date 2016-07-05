@@ -1,40 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Documents;
-using System.IO;
+﻿using System.IO;
 using System.Windows;
+using System.Windows.Documents;
 
 namespace Waf.Writer.Presentation.Documents
 {
     public class RichTextDocument : Document
     {
-        private readonly FlowDocument content;
-
-
         public RichTextDocument(RichTextDocumentType documentType) : this(documentType, new FlowDocument())
         {
         }
 
         public RichTextDocument(RichTextDocumentType documentType, FlowDocument content) : base(documentType)
         {
-            this.content = content;
+            Content = content;
         }
 
 
-        public FlowDocument Content { get { return content; } }
+        public FlowDocument Content { get; }
 
 
         public FlowDocument CloneContent()
         {
-            FlowDocument clone = new FlowDocument();
+            var clone = new FlowDocument();
 
-            using (MemoryStream stream = new MemoryStream())
+            using (var stream = new MemoryStream())
             {
-                TextRange source = new TextRange(Content.ContentStart, Content.ContentEnd);
+                var source = new TextRange(Content.ContentStart, Content.ContentEnd);
                 source.Save(stream, DataFormats.Xaml);
-                TextRange target = new TextRange(clone.ContentStart, clone.ContentEnd);
+                var target = new TextRange(clone.ContentStart, clone.ContentEnd);
                 target.Load(stream, DataFormats.Xaml);
             }
 

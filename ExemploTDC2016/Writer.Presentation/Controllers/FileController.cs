@@ -17,28 +17,29 @@ using Waf.Writer.Presentation.ViewModels;
 namespace Waf.Writer.Presentation.Controllers
 {
     /// <summary>
-    /// Responsible for the file related commands.
+    ///     Responsible for the file related commands.
     /// </summary>
     [Export]
     internal class FileController
     {
-        private readonly IMessageService messageService;
-        private readonly IFileDialogService fileDialogService;
-        private readonly IShellService shellService;
-        private readonly FileService fileService;
-        private readonly ExportFactory<SaveChangesViewModel> saveChangesViewModelFactory;
+        private readonly DelegateCommand closeCommand;
         private readonly List<IDocumentType> documentTypes;
-        private readonly RecentFileList recentFileList;
+        private readonly IFileDialogService fileDialogService;
+        private readonly FileService fileService;
+        private readonly IMessageService messageService;
         private readonly DelegateCommand newCommand;
         private readonly DelegateCommand openCommand;
-        private readonly DelegateCommand closeCommand;
-        private readonly DelegateCommand saveCommand;
+        private readonly RecentFileList recentFileList;
         private readonly DelegateCommand saveAsCommand;
+        private readonly ExportFactory<SaveChangesViewModel> saveChangesViewModelFactory;
+        private readonly DelegateCommand saveCommand;
+        private readonly IShellService shellService;
         private IDocument lastActiveDocument;
 
 
         [ImportingConstructor]
-        public FileController(IMessageService messageService, IFileDialogService fileDialogService, IShellService shellService,
+        public FileController(IMessageService messageService, IFileDialogService fileDialogService,
+            IShellService shellService,
             FileService fileService, ExportFactory<SaveChangesViewModel> saveChangesViewModelFactory)
         {
             this.messageService = messageService;
@@ -46,31 +47,37 @@ namespace Waf.Writer.Presentation.Controllers
             this.shellService = shellService;
             this.fileService = fileService;
             this.saveChangesViewModelFactory = saveChangesViewModelFactory;
-            this.documentTypes = new List<IDocumentType>();
-            this.newCommand = new DelegateCommand(NewCommand);
-            this.openCommand = new DelegateCommand(OpenCommand);
-            this.closeCommand = new DelegateCommand(CloseCommand, CanCloseCommand);
-            this.saveCommand = new DelegateCommand(SaveCommand, CanSaveCommand);
-            this.saveAsCommand = new DelegateCommand(SaveAsCommand, CanSaveAsCommand);
-            
+            documentTypes = new List<IDocumentType>();
+            newCommand = new DelegateCommand(NewCommand);
+            openCommand = new DelegateCommand(OpenCommand);
+            closeCommand = new DelegateCommand(CloseCommand, CanCloseCommand);
+            saveCommand = new DelegateCommand(SaveCommand, CanSaveCommand);
+            saveAsCommand = new DelegateCommand(SaveAsCommand, CanSaveAsCommand);
+
             this.fileService.NewCommand = newCommand;
             this.fileService.OpenCommand = openCommand;
             this.fileService.CloseCommand = closeCommand;
             this.fileService.SaveCommand = saveCommand;
             this.fileService.SaveAsCommand = saveAsCommand;
 
-            this.recentFileList = Settings.Default.RecentFileList;
-            if (this.recentFileList == null) { this.recentFileList = new RecentFileList(); }
+            recentFileList = Settings.Default.RecentFileList;
+            if (recentFileList == null)
+            {
+                recentFileList = new RecentFileList();
+            }
             this.fileService.RecentFileList = recentFileList;
 
             PropertyChangedEventManager.AddHandler(fileService, FileServicePropertyChanged, "");
         }
 
 
-        private ReadOnlyObservableCollection<IDocument> Documents { get { return fileService.Documents; } }
+        private ReadOnlyObservableCollection<IDocument> Documents
+        {
+            get { return fileService.Documents; }
+        }
 
-        private IDocument ActiveDocument 
-        { 
+        private IDocument ActiveDocument
+        {
             get { return fileService.ActiveDocument; }
             set { fileService.ActiveDocument = value; }
         }
@@ -95,13 +102,19 @@ namespace Waf.Writer.Presentation.Controllers
 
         public IDocument Open(string fileName)
         {
-            if (string.IsNullOrEmpty(fileName)) { throw new ArgumentException("The argument fileName must not be null or empty."); }
+            if (string.IsNullOrEmpty(fileName))
+            {
+                throw new ArgumentException("The argument fileName must not be null or empty.");
+            }
             return OpenCore(fileName);
         }
 
         public bool CloseAll()
         {
-            if (!CanDocumentsClose(Documents)) { return false; }
+            if (!CanDocumentsClose(Documents))
+            {
+                return false;
+            }
 
             ActiveDocument = null;
             while (Documents.Any())
@@ -111,11 +124,14 @@ namespace Waf.Writer.Presentation.Controllers
             return true;
         }
 
-        private void NewCommand() { New(documentTypes.First()); }
+        private void NewCommand()
+        {
+            New(documentTypes.First());
+        }
 
         private void OpenCommand(object commandParameter)
         {
-            string fileName = commandParameter as string;
+            var fileName = commandParameter as string;
             if (!string.IsNullOrEmpty(fileName))
             {
                 Open(fileName);
@@ -126,27 +142,51 @@ namespace Waf.Writer.Presentation.Controllers
             }
         }
 
-        private bool CanCloseCommand() { return ActiveDocument != null; }
+        private bool CanCloseCommand()
+        {
+            return ActiveDocument != null;
+        }
 
-        private void CloseCommand() { Close(ActiveDocument); }
+        private void CloseCommand()
+        {
+            Close(ActiveDocument);
+        }
 
-        private bool CanSaveCommand() { return ActiveDocument != null && ActiveDocument.Modified; }
+        private bool CanSaveCommand()
+        {
+            return ActiveDocument != null && ActiveDocument.Modified;
+        }
 
-        private void SaveCommand() { Save(ActiveDocument); }
+        private void SaveCommand()
+        {
+            Save(ActiveDocument);
+        }
 
-        private bool CanSaveAsCommand() { return ActiveDocument != null; }
+        private bool CanSaveAsCommand()
+        {
+            return ActiveDocument != null;
+        }
 
-        private void SaveAsCommand() { SaveAs(ActiveDocument); }
+        private void SaveAsCommand()
+        {
+            SaveAs(ActiveDocument);
+        }
 
         private void FileServicePropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "ActiveDocument")
             {
-                if (lastActiveDocument != null) { PropertyChangedEventManager.RemoveHandler(lastActiveDocument, ActiveDocumentPropertyChanged, ""); }
+                if (lastActiveDocument != null)
+                {
+                    PropertyChangedEventManager.RemoveHandler(lastActiveDocument, ActiveDocumentPropertyChanged, "");
+                }
 
                 lastActiveDocument = fileService.ActiveDocument;
 
-                if (lastActiveDocument != null) { PropertyChangedEventManager.AddHandler(lastActiveDocument, ActiveDocumentPropertyChanged, ""); }
+                if (lastActiveDocument != null)
+                {
+                    PropertyChangedEventManager.AddHandler(lastActiveDocument, ActiveDocumentPropertyChanged, "");
+                }
 
                 UpdateCommands();
             }
@@ -170,12 +210,15 @@ namespace Waf.Writer.Presentation.Controllers
 
         internal IDocument New(IDocumentType documentType)
         {
-            if (documentType == null) { throw new ArgumentNullException("documentType"); }
+            if (documentType == null)
+            {
+                throw new ArgumentNullException("documentType");
+            }
             if (!documentTypes.Contains(documentType))
             {
                 throw new ArgumentException("documentType is not an item of the DocumentTypes collection.");
             }
-            IDocument document = documentType.New();
+            var document = documentType.New();
             fileService.AddDocument(document);
             ActiveDocument = document;
             return document;
@@ -184,12 +227,15 @@ namespace Waf.Writer.Presentation.Controllers
         private IDocument Open()
         {
             var fileTypes = (from d in documentTypes
-                             where d.CanOpen()
-                             select new FileType(d.Description, d.FileExtension)
-                            ).ToArray();
-            if (!fileTypes.Any()) { throw new InvalidOperationException("No DocumentType is registered that supports the Open operation."); }
+                where d.CanOpen()
+                select new FileType(d.Description, d.FileExtension)
+                ).ToArray();
+            if (!fileTypes.Any())
+            {
+                throw new InvalidOperationException("No DocumentType is registered that supports the Open operation.");
+            }
 
-            FileDialogResult result = fileDialogService.ShowOpenFileDialog(shellService.ShellView, fileTypes);
+            var result = fileDialogService.ShowOpenFileDialog(shellService.ShellView, fileTypes);
             if (result.IsValid)
             {
                 return OpenCore(result.FileName, result.SelectedFileType);
@@ -202,7 +248,8 @@ namespace Waf.Writer.Presentation.Controllers
             if (Path.IsPathRooted(document.FileName))
             {
                 var saveTypes = documentTypes.Where(d => d.CanSave(document)).ToArray();
-                IDocumentType documentType = saveTypes.First(d => d.FileExtension == Path.GetExtension(document.FileName));
+                var documentType =
+                    saveTypes.First(d => d.FileExtension == Path.GetExtension(document.FileName));
                 SaveCore(documentType, document, document.FileName);
             }
             else
@@ -214,36 +261,45 @@ namespace Waf.Writer.Presentation.Controllers
         private void SaveAs(IDocument document)
         {
             var fileTypes = (from d in documentTypes
-                             where d.CanSave(document)
-                             select new FileType(d.Description, d.FileExtension)
-                            ).ToArray();
-            if (!fileTypes.Any()) { throw new InvalidOperationException("No DocumentType is registered that supports the Save operation."); }
+                where d.CanSave(document)
+                select new FileType(d.Description, d.FileExtension)
+                ).ToArray();
+            if (!fileTypes.Any())
+            {
+                throw new InvalidOperationException("No DocumentType is registered that supports the Save operation.");
+            }
 
             FileType selectedFileType;
             if (File.Exists(document.FileName))
             {
                 var saveTypes = documentTypes.Where(d => d.CanSave(document)).ToArray();
-                IDocumentType documentType = saveTypes.First(d => d.FileExtension == Path.GetExtension(document.FileName));
+                var documentType =
+                    saveTypes.First(d => d.FileExtension == Path.GetExtension(document.FileName));
                 selectedFileType = fileTypes.Where(
-                    f => f.Description == documentType.Description && f.FileExtension == documentType.FileExtension).First();
+                    f => f.Description == documentType.Description && f.FileExtension == documentType.FileExtension)
+                    .First();
             }
             else
             {
                 selectedFileType = fileTypes.First();
             }
-            string fileName = Path.GetFileNameWithoutExtension(document.FileName);
+            var fileName = Path.GetFileNameWithoutExtension(document.FileName);
 
-            FileDialogResult result = fileDialogService.ShowSaveFileDialog(shellService.ShellView, fileTypes, selectedFileType, fileName);
+            var result = fileDialogService.ShowSaveFileDialog(shellService.ShellView, fileTypes,
+                selectedFileType, fileName);
             if (result.IsValid)
             {
-                IDocumentType documentType = GetDocumentType(result.SelectedFileType);
+                var documentType = GetDocumentType(result.SelectedFileType);
                 SaveCore(documentType, document, result.FileName);
             }
         }
 
         private void Close(IDocument document)
         {
-            if (!CanDocumentsClose(new IDocument[] { document })) { return; }
+            if (!CanDocumentsClose(new[] {document}))
+            {
+                return;
+            }
 
             if (ActiveDocument == document)
             {
@@ -255,17 +311,20 @@ namespace Waf.Writer.Presentation.Controllers
         private bool CanDocumentsClose(IEnumerable<IDocument> documentsToClose)
         {
             var modifiedDocuments = documentsToClose.Where(d => d.Modified).ToArray();
-            if (!modifiedDocuments.Any()) { return true; }
+            if (!modifiedDocuments.Any())
+            {
+                return true;
+            }
 
             // Show the save changes view to the user
-            SaveChangesViewModel saveChangesViewModel = saveChangesViewModelFactory.CreateExport().Value;
+            var saveChangesViewModel = saveChangesViewModelFactory.CreateExport().Value;
             saveChangesViewModel.Documents = modifiedDocuments;
 
-            bool? dialogResult = saveChangesViewModel.ShowDialog(shellService.ShellView);
+            var dialogResult = saveChangesViewModel.ShowDialog(shellService.ShellView);
 
             if (dialogResult == true)
             {
-                foreach (IDocument document in modifiedDocuments)
+                foreach (var document in modifiedDocuments)
                 {
                     Save(document);
                 }
@@ -278,7 +337,7 @@ namespace Waf.Writer.Presentation.Controllers
         private IDocument OpenCore(string fileName, FileType fileType = null)
         {
             // Check if document is already opened
-            IDocument document = Documents.SingleOrDefault(d => d.FileName == fileName);
+            var document = Documents.SingleOrDefault(d => d.FileName == fileName);
             if (document == null)
             {
                 IDocumentType documentType;
@@ -291,9 +350,10 @@ namespace Waf.Writer.Presentation.Controllers
                     documentType = documentTypes.FirstOrDefault(dt => dt.FileExtension == Path.GetExtension(fileName));
                     if (documentType == null)
                     {
-                        Trace.TraceError(string.Format(CultureInfo.InvariantCulture, 
+                        Trace.TraceError(string.Format(CultureInfo.InvariantCulture,
                             "The extension of the file '{0}' is not supported.", fileName));
-                        messageService.ShowError(shellService.ShellView, string.Format(CultureInfo.CurrentCulture, Resources.FileExtensionNotSupported, fileName));
+                        messageService.ShowError(shellService.ShellView,
+                            string.Format(CultureInfo.CurrentCulture, Resources.FileExtensionNotSupported, fileName));
                         return null;
                     }
                 }
@@ -305,10 +365,11 @@ namespace Waf.Writer.Presentation.Controllers
                 catch (Exception e)
                 {
                     Trace.TraceError(e.ToString());
-                    messageService.ShowError(shellService.ShellView, string.Format(CultureInfo.CurrentCulture, Resources.CannotOpenFile, fileName));
+                    messageService.ShowError(shellService.ShellView,
+                        string.Format(CultureInfo.CurrentCulture, Resources.CannotOpenFile, fileName));
                     if (e is FileNotFoundException)
                     {
-                        RecentFile recentFile = recentFileList.RecentFiles.FirstOrDefault(x => x.Path == fileName);
+                        var recentFile = recentFileList.RecentFiles.FirstOrDefault(x => x.Path == fileName);
                         if (recentFile != null)
                         {
                             recentFileList.Remove(recentFile);
@@ -316,7 +377,7 @@ namespace Waf.Writer.Presentation.Controllers
                     }
                     return null;
                 }
-                
+
                 fileService.AddDocument(document);
                 recentFileList.AddFile(document.FileName);
             }
@@ -333,18 +394,22 @@ namespace Waf.Writer.Presentation.Controllers
             catch (Exception e)
             {
                 Trace.TraceError(e.ToString());
-                messageService.ShowError(shellService.ShellView, string.Format(CultureInfo.CurrentCulture, Resources.CannotSaveFile, fileName));
+                messageService.ShowError(shellService.ShellView,
+                    string.Format(CultureInfo.CurrentCulture, Resources.CannotSaveFile, fileName));
             }
 
-            if (documentType.CanOpen()) { recentFileList.AddFile(fileName); }
+            if (documentType.CanOpen())
+            {
+                recentFileList.AddFile(fileName);
+            }
         }
 
         private IDocumentType GetDocumentType(FileType fileType)
         {
-            IDocumentType documentType = (from d in documentTypes
-                                          where d.Description == fileType.Description
-                                              && d.FileExtension == fileType.FileExtension
-                                          select d).First();
+            var documentType = (from d in documentTypes
+                where d.Description == fileType.Description
+                      && d.FileExtension == fileType.FileExtension
+                select d).First();
             return documentType;
         }
     }

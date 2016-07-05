@@ -16,24 +16,21 @@ namespace Waf.Writer.Presentation.ViewModels
     [Export]
     public class ShellViewModel : ViewModel<IShellView>
     {
-        private readonly IMessageService messageService;
-        private readonly IShellService shellService;
-        private readonly IFileService fileService;
+        private readonly DelegateCommand aboutCommand;
         private readonly DelegateCommand englishCommand;
         private readonly DelegateCommand germanCommand;
-        private readonly DelegateCommand aboutCommand;
-        private ICommand printPreviewCommand;
-        private ICommand closePrintPreviewCommand;
-        private ICommand printCommand;
-        private ICommand exitCommand;
-        private object contentView;
-        private object consoleView;
-        private bool isPrintPreviewVisible;
-        private CultureInfo newLanguage;
+        private readonly IMessageService messageService;
         private readonly ICommand showConsoleCommand;
-        private ObservableCollection<RibbonGroup> ribbonGroups = new ObservableCollection<RibbonGroup>();
-        private bool isConsoleVisible;
+        private ICommand closePrintPreviewCommand;
         private double consoleHeight;
+        private object consoleView;
+        private object contentView;
+        private ICommand exitCommand;
+        private bool isConsoleVisible;
+        private bool isPrintPreviewVisible;
+        private ICommand printCommand;
+        private ICommand printPreviewCommand;
+        private ObservableCollection<RibbonGroup> ribbonGroups = new ObservableCollection<RibbonGroup>();
 
         [ImportingConstructor]
         public ShellViewModel(IShellView view, IMessageService messageService, IPresentationService presentationService,
@@ -41,13 +38,13 @@ namespace Waf.Writer.Presentation.ViewModels
             : base(view)
         {
             this.messageService = messageService;
-            this.shellService = shellService;
-            this.fileService = fileService;
-            this.englishCommand = new DelegateCommand(() => SelectLanguage(new CultureInfo("en-US")));
-            this.germanCommand = new DelegateCommand(() => SelectLanguage(new CultureInfo("de-DE")));
-            this.aboutCommand = new DelegateCommand(ShowAboutMessage);
+            ShellService = shellService;
+            FileService = fileService;
+            englishCommand = new DelegateCommand(() => SelectLanguage(new CultureInfo("en-US")));
+            germanCommand = new DelegateCommand(() => SelectLanguage(new CultureInfo("de-DE")));
+            aboutCommand = new DelegateCommand(ShowAboutMessage);
 
-            this.showConsoleCommand = new DelegateCommand(ShowConsole);
+            showConsoleCommand = new DelegateCommand(ShowConsole);
 
             view.Closing += ViewClosing;
             view.Closed += ViewClosed;
@@ -75,20 +72,11 @@ namespace Waf.Writer.Presentation.ViewModels
             get { return ApplicationInfo.ProductName; }
         }
 
-        public IShellService ShellService
-        {
-            get { return shellService; }
-        }
+        public IShellService ShellService { get; }
 
-        public IFileService FileService
-        {
-            get { return fileService; }
-        }
+        public IFileService FileService { get; }
 
-        public CultureInfo NewLanguage
-        {
-            get { return newLanguage; }
-        }
+        public CultureInfo NewLanguage { get; private set; }
 
         public ICommand EnglishCommand
         {
@@ -182,16 +170,16 @@ namespace Waf.Writer.Presentation.ViewModels
         {
             if (!uiCulture.Equals(CultureInfo.CurrentUICulture))
             {
-                messageService.ShowMessage(shellService.ShellView, Resources.RestartApplication + "\n\n" +
+                messageService.ShowMessage(ShellService.ShellView, Resources.RestartApplication + "\n\n" +
                                                                    Resources.ResourceManager.GetString(
                                                                        "RestartApplication", uiCulture));
             }
-            newLanguage = uiCulture;
+            NewLanguage = uiCulture;
         }
 
         private void ShowAboutMessage()
         {
-            messageService.ShowMessage(shellService.ShellView,
+            messageService.ShowMessage(ShellService.ShellView,
                 string.Format(CultureInfo.CurrentCulture, Resources.AboutText,
                     ApplicationInfo.ProductName, ApplicationInfo.Version));
         }

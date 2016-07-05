@@ -8,17 +8,20 @@ using Waf.Writer.Presentation.Services;
 namespace Waf.Writer.Presentation.Controllers
 {
     /// <summary>
-    /// Responsible to synchronize the Documents with the UI Elements that represent these Documents.
+    ///     Responsible to synchronize the Documents with the UI Elements that represent these Documents.
     /// </summary>
     internal abstract class DocumentController
     {
         private readonly IFileService fileService;
-        
-        
+
+
         protected DocumentController(IFileService fileService)
         {
-            if (fileService == null) { throw new ArgumentNullException("fileService"); }
-            
+            if (fileService == null)
+            {
+                throw new ArgumentNullException("fileService");
+            }
+
             this.fileService = fileService;
             PropertyChangedEventManager.AddHandler(fileService, FileServicePropertyChanged, "");
             CollectionChangedEventManager.AddHandler(fileService.Documents, DocumentsCollectionChanged);
@@ -33,7 +36,10 @@ namespace Waf.Writer.Presentation.Controllers
 
         private void FileServicePropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "ActiveDocument") { OnActiveDocumentChanged(fileService.ActiveDocument); }
+            if (e.PropertyName == "ActiveDocument")
+            {
+                OnActiveDocumentChanged(fileService.ActiveDocument);
+            }
         }
 
         private void DocumentsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

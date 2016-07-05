@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Waf.Applications;
 using System.ComponentModel;
+using System.Waf.Applications;
 
 namespace Waf.Writer.Presentation.Views
 {
     public interface IShellView : IView
     {
         double Left { get; set; }
-        
+
         double Top { get; set; }
 
         double Width { get; set; }
@@ -19,12 +16,12 @@ namespace Waf.Writer.Presentation.Views
 
         bool IsMaximized { get; set; }
 
-        
+
         event CancelEventHandler Closing;
 
         event EventHandler Closed;
 
-        
+
         void Show();
 
         void Close();

@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.Composition;
 using System.Windows.Controls;
 using System.Windows.Documents;
-using Waf.Writer.Presentation.Services;
 
 namespace Waf.Writer.Presentation.Services
 {

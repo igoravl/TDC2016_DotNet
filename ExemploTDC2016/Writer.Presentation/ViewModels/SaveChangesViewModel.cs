@@ -10,25 +10,34 @@ namespace Waf.Writer.Presentation.ViewModels
     [Export, PartCreationPolicy(CreationPolicy.NonShared)]
     public class SaveChangesViewModel : ViewModel<ISaveChangesView>
     {
-        private readonly DelegateCommand yesCommand;
         private readonly DelegateCommand noCommand;
-        private IReadOnlyList<IDocument> documents;
+        private readonly DelegateCommand yesCommand;
         private bool? dialogResult;
+        private IReadOnlyList<IDocument> documents;
 
-        
+
         [ImportingConstructor]
         public SaveChangesViewModel(ISaveChangesView view) : base(view)
         {
-            this.yesCommand = new DelegateCommand(() => Close(true));
-            this.noCommand = new DelegateCommand(() => Close(false));
+            yesCommand = new DelegateCommand(() => Close(true));
+            noCommand = new DelegateCommand(() => Close(false));
         }
 
 
-        public static string Title { get { return ApplicationInfo.ProductName; } }
+        public static string Title
+        {
+            get { return ApplicationInfo.ProductName; }
+        }
 
-        public ICommand YesCommand { get { return yesCommand; } }
+        public ICommand YesCommand
+        {
+            get { return yesCommand; }
+        }
 
-        public ICommand NoCommand { get { return noCommand; } }
+        public ICommand NoCommand
+        {
+            get { return noCommand; }
+        }
 
         public IReadOnlyList<IDocument> Documents
         {

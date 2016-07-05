@@ -9,7 +9,7 @@ namespace Waf.Writer.Presentation.DesignData
     {
         public SampleStartViewModel() : base(new MockStartView(), new MockFileService())
         {
-            ((MockFileService)FileService).RecentFileList = new RecentFileList();
+            ((MockFileService) FileService).RecentFileList = new RecentFileList();
             FileService.RecentFileList.AddFile(@"C:\Users\Admin\My Documents\Document 1.rtf");
             FileService.RecentFileList.AddFile(@"C:\Users\Admin\My Documents\WPF Application Framework (WAF).rtf");
             FileService.RecentFileList.AddFile(@"C:\Users\Admin\My Documents\WAF Writer\Readme.rtf");

@@ -1,14 +1,6 @@
-﻿using System.Linq;
-using System.ComponentModel.Composition;
-using System.Windows.Controls;
-using Waf.Writer.Presentation.Views;
-using System;
-using Waf.Writer.Presentation.ViewModels;
-using System.Collections.Generic;
-using System.Waf.Applications;
+﻿using System.ComponentModel.Composition;
 using System.Windows;
-using Waf.Writer.Presentation.Converters;
-using System.Globalization;
+using System.Windows.Controls;
 
 namespace Waf.Writer.Presentation.Views
 {
@@ -16,7 +8,7 @@ namespace Waf.Writer.Presentation.Views
     public partial class MainView : UserControl, IMainView
     {
         private ContentViewState contentViewState;
-        
+
 
         public MainView()
         {

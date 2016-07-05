@@ -3,20 +3,20 @@
                     xmlns:waf="http://waf.codeplex.com/schemas"
                     xmlns:c="clr-namespace:Waf.Writer.Presentation.Converters">
 
-    <waf:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    <waf:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
-    <c:BoolToVisibleOrHidden x:Key="BoolToVisibleOrHiddenConverter"/>
+    <c:BoolToVisibleOrHidden x:Key="BoolToVisibleOrHiddenConverter" />
 
-    <waf:InvertBooleanConverter x:Key="InvertBooleanConverter"/>
+    <waf:InvertBooleanConverter x:Key="InvertBooleanConverter" />
 
-    <c:DoubleToZoomConverter x:Key="DoubleToZoomConverter"/>
+    <c:DoubleToZoomConverter x:Key="DoubleToZoomConverter" />
 
-    <c:MenuFileNameConverter x:Key="MenuFileNameConverter"/>
+    <c:MenuFileNameConverter x:Key="MenuFileNameConverter" />
 
-    <c:PercentConverter x:Key="PercentConverter"/>
+    <c:PercentConverter x:Key="PercentConverter" />
 
-    <c:TabFileNameConverter x:Key="TabFileNameConverter"/>
+    <c:TabFileNameConverter x:Key="TabFileNameConverter" />
 
-    <c:TitleConverter x:Key="TitleConverter"/>
-    
+    <c:TitleConverter x:Key="TitleConverter" />
+
 </ResourceDictionary>

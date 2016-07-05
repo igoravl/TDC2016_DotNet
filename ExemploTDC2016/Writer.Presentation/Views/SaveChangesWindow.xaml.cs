@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.Composition;
 using System.Windows;
-using Waf.Writer.Presentation.Views;
 
 namespace Waf.Writer.Presentation.Views
 {

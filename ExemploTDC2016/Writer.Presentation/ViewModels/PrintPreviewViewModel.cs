@@ -9,8 +9,8 @@ namespace Waf.Writer.Presentation.ViewModels
     public class PrintPreviewViewModel : ZoomViewModel<IPrintPreviewView>
     {
         private IDocumentPaginatorSource document;
-        
-        
+
+
         [ImportingConstructor]
         public PrintPreviewViewModel(IPrintPreviewView view, IShellService shellService)
             : base(view, shellService)
@@ -32,4 +32,3 @@ namespace Waf.Writer.Presentation.ViewModels
         }
     }
 }
-

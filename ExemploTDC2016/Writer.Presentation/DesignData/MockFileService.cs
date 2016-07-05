@@ -10,19 +10,19 @@ namespace Waf.Writer.Presentation.DesignData
     public class MockFileService : Model, IFileService
     {
         public ReadOnlyObservableCollection<IDocument> Documents { get; set; }
-        
+
         public IDocument ActiveDocument { get; set; }
-        
+
         public RecentFileList RecentFileList { get; set; }
-        
+
         public ICommand NewCommand { get; set; }
-        
+
         public ICommand OpenCommand { get; set; }
-        
+
         public ICommand CloseCommand { get; set; }
-        
+
         public ICommand SaveCommand { get; set; }
-        
+
         public ICommand SaveAsCommand { get; set; }
     }
 }

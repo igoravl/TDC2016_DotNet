@@ -14,36 +14,36 @@ using Waf.Writer.Presentation.ViewModels;
 namespace Waf.Writer.Presentation.Controllers
 {
     /// <summary>
-    /// Responsible for the print related commands and the PrintPreview.
+    ///     Responsible for the print related commands and the PrintPreview.
     /// </summary>
     [Export]
     internal class PrintController
     {
         private const string PackagePath = "pack://temp.xps";
-        
-        private readonly IFileService fileService;
-        private readonly IPrintDialogService printDialogService;
-        private readonly ShellViewModel shellViewModel;
-        private readonly ExportFactory<PrintPreviewViewModel> printPreviewViewModelFactory;
-        private readonly DelegateCommand printPreviewCommand;
-        private readonly DelegateCommand printCommand;
         private readonly DelegateCommand closePrintPreviewCommand;
-        private object previousView;
+
+        private readonly IFileService fileService;
+        private readonly DelegateCommand printCommand;
+        private readonly IPrintDialogService printDialogService;
+        private readonly DelegateCommand printPreviewCommand;
+        private readonly ExportFactory<PrintPreviewViewModel> printPreviewViewModelFactory;
+        private readonly ShellViewModel shellViewModel;
         private Package package;
+        private object previousView;
         private XpsDocument xpsDocument;
 
-        
+
         [ImportingConstructor]
-        public PrintController(IFileService fileService, IPrintDialogService printDialogService, 
+        public PrintController(IFileService fileService, IPrintDialogService printDialogService,
             ShellViewModel shellViewModel, ExportFactory<PrintPreviewViewModel> printPreviewViewModelFactory)
         {
             this.fileService = fileService;
             this.printDialogService = printDialogService;
             this.shellViewModel = shellViewModel;
             this.printPreviewViewModelFactory = printPreviewViewModelFactory;
-            this.printPreviewCommand = new DelegateCommand(ShowPrintPreview, CanShowPrintPreview);
-            this.printCommand = new DelegateCommand(PrintDocument, CanPrintDocument);
-            this.closePrintPreviewCommand = new DelegateCommand(ClosePrintPreview);
+            printPreviewCommand = new DelegateCommand(ShowPrintPreview, CanShowPrintPreview);
+            printCommand = new DelegateCommand(PrintDocument, CanPrintDocument);
+            closePrintPreviewCommand = new DelegateCommand(ClosePrintPreview);
 
             PropertyChangedEventManager.AddHandler(fileService, FileServicePropertyChanged, "");
         }
@@ -53,7 +53,7 @@ namespace Waf.Writer.Presentation.Controllers
         {
             shellViewModel.PrintPreviewCommand = printPreviewCommand;
             shellViewModel.ClosePrintPreviewCommand = closePrintPreviewCommand;
-            shellViewModel.PrintCommand = printCommand;            
+            shellViewModel.PrintCommand = printCommand;
         }
 
         public void Shutdown()
@@ -72,28 +72,28 @@ namespace Waf.Writer.Presentation.Controllers
         private void ShowPrintPreview()
         {
             // We have to clone the FlowDocument before we use different pagination settings for the export.        
-            RichTextDocument document = fileService.ActiveDocument as RichTextDocument;
-            FlowDocument clone = document.CloneContent();
+            var document = fileService.ActiveDocument as RichTextDocument;
+            var clone = document.CloneContent();
             clone.ColumnWidth = double.PositiveInfinity;
 
             // Create a package for the XPS document
-            MemoryStream packageStream = new MemoryStream();
+            var packageStream = new MemoryStream();
             package = Package.Open(packageStream, FileMode.Create, FileAccess.ReadWrite);
 
             // Create a XPS document with the path "pack://temp.xps"
             PackageStore.AddPackage(new Uri(PackagePath), package);
             xpsDocument = new XpsDocument(package, CompressionOption.SuperFast, PackagePath);
-            
+
             // Serialize the XPS document
-            XpsSerializationManager serializer = new XpsSerializationManager(new XpsPackagingPolicy(xpsDocument), false);
-            DocumentPaginator paginator = ((IDocumentPaginatorSource)clone).DocumentPaginator;
+            var serializer = new XpsSerializationManager(new XpsPackagingPolicy(xpsDocument), false);
+            var paginator = ((IDocumentPaginatorSource) clone).DocumentPaginator;
             serializer.SaveAsXaml(paginator);
 
             // Get the fixed document sequence
-            FixedDocumentSequence documentSequence = xpsDocument.GetFixedDocumentSequence();
-            
+            var documentSequence = xpsDocument.GetFixedDocumentSequence();
+
             // Create and show the print preview view
-            PrintPreviewViewModel printPreviewViewModel = printPreviewViewModelFactory.CreateExport().Value;
+            var printPreviewViewModel = printPreviewViewModelFactory.CreateExport().Value;
             printPreviewViewModel.Document = documentSequence;
             previousView = shellViewModel.ContentView;
             shellViewModel.ContentView = printPreviewViewModel.View;
@@ -111,10 +111,10 @@ namespace Waf.Writer.Presentation.Controllers
             if (printDialogService.ShowDialog())
             {
                 // We have to clone the FlowDocument before we use different pagination settings for the export.        
-                RichTextDocument document = (RichTextDocument)fileService.ActiveDocument;
-                FlowDocument clone = document.CloneContent();
+                var document = (RichTextDocument) fileService.ActiveDocument;
+                var clone = document.CloneContent();
 
-                printDialogService.PrintDocument(((IDocumentPaginatorSource)clone).DocumentPaginator, 
+                printDialogService.PrintDocument(((IDocumentPaginatorSource) clone).DocumentPaginator,
                     fileService.ActiveDocument.FileName);
             }
         }
