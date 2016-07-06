@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Waf.Applications;
 using System.Waf.Applications.Services;
+using System.Windows;
 using System.Windows.Controls.Ribbon;
 using System.Windows.Input;
 using Waf.Writer.Presentation.Properties;
@@ -23,7 +24,6 @@ namespace Waf.Writer.Presentation.ViewModels
         private readonly DelegateCommand englishCommand;
         private readonly DelegateCommand germanCommand;
         private readonly IMessageService messageService;
-        private readonly IPowerShellService _powerShellService;
         private readonly ICommand showConsoleCommand;
         private ICommand closePrintPreviewCommand;
         private double consoleHeight;
@@ -85,10 +85,9 @@ namespace Waf.Writer.Presentation.ViewModels
         }
 
 
-        public string Title
-        {
-            get { return ApplicationInfo.ProductName; }
-        }
+        public string Title => ApplicationInfo.ProductName;
+
+        public Window Window => Application.Current.MainWindow;
 
         public IShellService ShellService { get; }
 
@@ -175,6 +174,11 @@ namespace Waf.Writer.Presentation.ViewModels
         {
             get { return editMacrosCommand; }
             set { editMacrosCommand = value; }
+        }
+
+        public ICommand ShowConsoleCommand
+        {
+            get { return showConsoleCommand; }
         }
 
         public event CancelEventHandler Closing;

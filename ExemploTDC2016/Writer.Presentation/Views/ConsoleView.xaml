@@ -16,7 +16,7 @@
             <TextBox x:Name="inputBox" Padding="0,3,3,3" HorizontalAlignment="Stretch" BorderThickness="0"
                      Background="{StaticResource ConsoleBackgroundBrush}"
                      Foreground="{StaticResource ConsoleForegroundBrush}" IsTabStop="True" TabIndex="0"
-                     KeyDown="InputBox_OnKeyDown" />
+                     PreviewKeyDown="InputBox_OnPreviewKeyDown" />
         </DockPanel>
         <ScrollViewer VerticalScrollBarVisibility="Auto" x:Name="ScrollViewer">
             <FlowDocumentScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"

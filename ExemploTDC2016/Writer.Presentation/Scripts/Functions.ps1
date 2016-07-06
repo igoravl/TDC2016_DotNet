@@ -10,7 +10,7 @@ Function New-RibbonButton($Text, $Image, [scriptblock] $Action)
 {
     $btn = New-Object 'System.Windows.Controls.Ribbon.RibbonButton'
     $btn.Label = $Text
-    #$btn.LargeImage = $Image
+    $btn.LargeImageSource = (Get-ImageFromResource $Image)
     $btn.add_Click($Action)
 
     return $btn
@@ -31,6 +31,16 @@ Function Add-RibbonButton($Group, $Button, $Image, [scriptblock] $Action)
     $App.RibbonGroups.Add($grp)
 }
 
+Function Get-ImageFromResource($ImageName)
+{
+    $bmp = New-Object 'System.Windows.Media.Imaging.BitmapImage'
+    $bmp.BeginInit()
+    $bmp.UriSource = [uri] "pack://application:,,,/resources/images/$ImageName.png"
+    $bmp.EndInit()
+
+    return $bmp
+}
+
 Function Add-Text($Document, $Text)
 {
     $p = New-Object 'System.Windows.Documents.Paragraph'
@@ -46,8 +56,19 @@ Function Show-MessageBox($Text)
     [System.Windows.Forms.MessageBox]::Show($Text)
 }
 
+Function New-FileDocument
+{
+    $App.FileService.NewCommand.Execute($null)
+}
+
+Function Open-FileDocument($file)
+{
+    $App.FileService.OpenCommand.Execute($file)
+}
+
 Function AutoExec
 {
-    Add-RibbonButton -Group 'Grupo 1' -Button 'Botao 1' -Action ({ Show-MessageBox 'Ribbon 1!'})
-    Add-RibbonButton -Group 'Grupo 1' -Button 'Botao 2' -Action ({ Show-MessageBox 'Ribbon 2!'})
+    Add-RibbonButton -Group 'Ferramentas' -Button 'Planilhas' -Image 'Document Spreadsheet' -Action ({ Show-MessageBox 'Abrir planilhas'})
+    Add-RibbonButton -Group 'Mídias Sociais' -Button 'Facebook' -Image 'Social Facebook' -Action ({ Start-Process 'https://www.facebook.com/lambda3br' })
+    Add-RibbonButton -Group 'Mídias Sociais' -Button 'Twitter' -Image 'Social Twitter' -Action ({ Start-Process 'https://twitter.com/lambdatres' })
 }

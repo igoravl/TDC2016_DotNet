@@ -37,6 +37,11 @@ namespace Waf.Writer.Presentation.ViewModels
 
         public FlowDocument Document { get; } = new FlowDocument();
 
+        public IPowerShellService PowerShellService
+        {
+            get { return _powerShellService; }
+        }
+
         public void Write(string text, Brush color)
         {
             if (string.IsNullOrEmpty(text))

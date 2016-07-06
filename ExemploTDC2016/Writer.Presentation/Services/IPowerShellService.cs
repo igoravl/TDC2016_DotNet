@@ -13,5 +13,7 @@ namespace Waf.Writer.Presentation.Services
         void Reload();
         void RunAutoExec();
         IEnumerable<object> Invoke(string script);
+        HistoryList History { get; }
+
     }
 }

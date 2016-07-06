@@ -21,8 +21,9 @@ namespace Waf.Writer.Presentation.Views
             ScrollViewer.ScrollToEnd();
         }
 
-        private void InputBox_OnKeyDown(object sender, KeyEventArgs e)
+        private void InputBox_OnPreviewKeyDown(object sender, KeyEventArgs e)
         {
+
             switch (e.Key)
             {
                 case Key.Enter:
@@ -30,14 +31,41 @@ namespace Waf.Writer.Presentation.Views
                     RunCommand();
                     break;
                 }
+                case Key.Up:
+                {
+                    HistoryUp();
+                    break;
+                }
+                case Key.Down:
+                {
+                    HistoryDown();
+                    break;
+                }
             }
+        }
+
+        private void HistoryUp()
+        {
+            var vm = (ConsoleViewModel) DataContext;
+            inputBox.Text = vm.PowerShellService.History.Up();
+        }
+
+        private void HistoryDown()
+        {
+            var vm = (ConsoleViewModel)DataContext;
+            inputBox.Text = vm.PowerShellService.History.Down();
         }
 
         private void RunCommand()
         {
             var vm = (ConsoleViewModel) DataContext;
-            vm.Invoke(inputBox.Text);
+            var command = inputBox.Text;
+
+            vm.Invoke(command);
+
             inputBox.Text = string.Empty;
+
+            vm.PowerShellService.History.Add(command);
         }
     }
 }

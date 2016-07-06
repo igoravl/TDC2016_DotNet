@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Primitives;
 using System.IO;
@@ -155,5 +156,7 @@ Function Init($viewModel)
 
             return result;
         }
+
+        public HistoryList History { get; } = new HistoryList();
     }
 }
